@@ -2,14 +2,18 @@
 //#include <wiringPi.h>
 #include <locale.h>
 
-const char * const perguntas[5] = {"Qual foi o primeiro computador eletronico ja criado?",
+const int max_comprimento_PER = 5;
+const int max_comprimento_ALT = 20;
+
+
+const char * const perguntas[max_comprimento_PER] = {"Qual foi o primeiro computador eletronico ja criado?",
 				   "Quem foi Steve Jobs e Bill Gates, respectivamente: ",
 				   "Quem foi o(a) primeiro(a) programador(a) da historia?",
 				   "O que sao Redes de Computadores?",
 				   "Qual foi a primeira linguagem de programacao que existiu na historia da computacao"};
 
 
-const char * const alternativas[20] = {"ENIAC", "ALTAIR", "Abaco", "Apple I", // respostas da 1º pergunta
+const char * const alternativas[max_comprimento_ALT] = {"ENIAC", "ALTAIR", "Abaco", "Apple I", // respostas da 1º pergunta
 
 				    "Fundador da Digital e criador do BASIC", "Fundadores do Atari e da Apple", // respostas da 2º pergunta
 				    "Fundadores da Apple e Microsoft", "Criadores do Iphone e da linguagem C",
@@ -24,7 +28,7 @@ const char * const alternativas[20] = {"ENIAC", "ALTAIR", "Abaco", "Apple I", //
 				    "C++", "Java", "Assembly", "Linguagem C"}; 
 
 
-const char respostas[5] = {'a', 'c', 'd', 'a', 'c'};
+const char respostas[max_comprimento_PER] = {'a', 'c', 'd', 'a', 'c'};
 int qtd = 0;
 
 
@@ -38,16 +42,17 @@ int main()
 	//system("clear");
 
 	int i = 0;
-	for(i = 0; i < 5; i++)
+	for(i = 0; i < max_comprimento_PER; i++)
 		quiz(i);
 }
 
 void quiz(int n)
 {
-	char letras[4] = {'a', 'b', 'c', 'd'};
+  int num_ALT = 4;
+	char letras[num_ALT] = {'a', 'b', 'c', 'd'};
 	int i = 0;
-	int holder = (n + 1) * 4;
-	int posicao = n * 4;
+	int holder = (n + 1) * num_ALT;
+	int posicao = n * num_ALT;
 	char alternativa_escolhida;
 
 	//inicio:
