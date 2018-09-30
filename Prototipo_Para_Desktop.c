@@ -1,5 +1,4 @@
 #include <stdio.h>  // biblioteca padrão incluída
-#include <wiringPi.h> // biblioteca do raspberry
 #include <locale.h>   // biblioteca para selecionar a região incluída
 #include <stdbool.h>  // biblioteca para tratar booleanos incluída
 #define max_comprimento_PER 5   // define "max_comprimento_PER" com o valor de 5
@@ -31,8 +30,6 @@ const char * const alternativas[max_comprimento_ALT] = {"ENIAC", "ALTAIR", "Abac
 // instancia um vetor com as respostas corretas
 const char respostas[max_comprimento_PER] = {'a', 'c', 'd', 'a', 'c'};
 static int qtd = 0;  // inicializa a quantidade que o jogador acertou
-static int ledVerde = 0;  // inicializa o pino que terá a led verde (no caso 0)
-static int ledVermelho = 1; // inicializa o pino que terá a led vermelha (no caso 1)
 
 void quiz(int); // avisa ao compilador sobre a existência da função "quiz"
 void validacao(char, int);  // avisa ao compilador sobre a existência da função "validação"
@@ -40,8 +37,6 @@ void validacao(char, int);  // avisa ao compilador sobre a existência da função 
 // main funcionando
 int main()  
 {
-	pinMode(ledVerde, OUTPUT);  // modela o pino 0 para saída
-	pinMode(ledVermelho, OUTPUT); // modela o pino 1 para saída
 	printf("Quiz de informática\n"); // sub-titulo do programa
 	system("cls");  // comando para limpar tela
 
@@ -107,14 +102,8 @@ void validacao(char escolha, int n) // recebe a alternativa escolhida(a,b,c ou d
 	if(escolha == respostas[n]){  // se as alternativas forem iguais(ex.: escolha == 'a' && respostas[n] == 'a')
 		printf("Você acertou!!\n"); // mostra que o jogador acertou
 		qtd++;    // e incrementa a quantidade de acertos
-		digitalWrite(ledVerde, HIGH); // faz com que a led verde acenda
-		delay(1000);  // delay de 1 segundo
-		digitalWrite(ledVerde, LOW);  // faz com que a led verde apague
 	}else{ // se não:
 		printf("Você errou.. a alternativa correta é: %c\n", respostas[n]); // mostra que o jogador errou
                                                                         // e imprime a alternativa correta
-    digitalWrite(ledVermelho, HIGH);  // faz com que a led vermelha acenda
-    delay(1500);  // delay de 1,5 segundos
-    digitalWrite(ledVermelho, LOW); // faz com que a led vermelha apague
   }                                                               
 }
