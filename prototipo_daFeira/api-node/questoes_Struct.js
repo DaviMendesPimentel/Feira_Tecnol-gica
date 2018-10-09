@@ -1,5 +1,5 @@
 
-//cria um contrutor para uma classe "Questão"
+//cria um contrutor para uma "classe" "Questão"
 function Questao(texto, escolhas, resposta){
     this.texto = texto;
     this.escolhas = escolhas;

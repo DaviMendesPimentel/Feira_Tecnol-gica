@@ -1,7 +1,5 @@
 var http = require('http'); //inclui as funções de HTTP
 var fs = require('fs');     //inclui as funções de File System(arquivos do sistema)
-//var gpio = require('gpio');
-
 
 function Requisicao(requisitado, resposta){ // cria uma função 'Requisição'
 
@@ -13,7 +11,7 @@ function Requisicao(requisitado, resposta){ // cria uma função 'Requisição'
             resposta.writeHead(404);    // invoca o 404
             resposta.writeHead('arquivo não encontrado..'); // arquivo não encontrado...
         }else{  // se não
-            resposta.write(html);  // imprime o index.html
+            resposta.write(html);  // exibe o index.html
         }
         resposta.end(); // finaliza o processo
     });

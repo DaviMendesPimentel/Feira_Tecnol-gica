@@ -1,4 +1,4 @@
-//cria um contrutor para a classe "Quiz"
+//cria um contrutor para a "classe" "Quiz"
 function Quiz(questoes){
     this.record = 0;
     this.questoes = questoes;
