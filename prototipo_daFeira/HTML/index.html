@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Quiz Protótipo</title>
+		<link rel="stylesheet" href="../CSS/stylesheet.css" type="text/css"/>
+    </head>
+
+    <body>
+        <div class="grade">
+            <div id="quiz">
+                <h1>Quiz</h1>
+                <hr style="margin-bottom: 20px">
+
+                <p id="questoes"></p>
+
+                <div class="botoes">
+                    <button id="btn0"><span id="esc0"></span></button>
+                    <button id="btn1"><span id="esc1"></span></button>
+                    <button id="btn2"><span id="esc2"></span></button>
+                    <button id="btn3"><span id="esc3"></span></button>
+                </div>
+
+                <hr style="margin-top: 50px">
+
+                <footer>
+                    <p id="progresso">Questão x de y.</p>
+                </footer>
+            </div>
+
+        </div>
+        
+        <script src="../api-node/quiz_controle.js"></script>
+        <script src="../api-node/questoes_Struct.js"></script>
+        <script src="../api-node/PER_main.js"></script>
+    
+    </body>
+</html>
