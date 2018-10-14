@@ -1,22 +1,4 @@
 
-function populate(){
-    if(quiz.acabado()){
-        //Mostra os Records;
-    }
-    else{
-        //Mostra as questões
-        var elementoQuestao = document.getElementById("questoes"); //pega o id "questoes" do arquivo index.html
-        elementoQuestao.innerHTML = quiz.getQuestoes_do_Index().text;   //preenche o "questoes" do HTML com o retorno de
-                                                            //getQuestoes_do_Index()
-
-        var escolhas = quiz.getQuestoes_do_Index().escolhas;
-
-        for(var i = 0; i < escolhas; i++){
-            var elemento = document.getElementById("esc" + i);
-            elemento.innerHTML = escolhas[i];
-        }
-    }
-}
 
 //perguntas, opções de escolha e respostas
 var quiz_completo = [
@@ -41,3 +23,22 @@ var quiz_completo = [
 ];
 
 var quiz = new Quiz(quiz_completo);
+
+function populate(){
+    if(quiz.acabado()){
+        //Mostra os Records;
+    }
+    else{
+        //Mostra as questões
+        var elementoQuestao = document.getElementById("questoes"); //pega o id "questoes" do arquivo index.html
+        elementoQuestao.innerHTML = quiz.getQuestoes_do_Index().text;   //preenche o "questoes" do HTML com o retorno de
+                                                            //getQuestoes_do_Index()
+
+        var escolhas = quiz.getQuestoes_do_Index().escolhas;
+
+        for(var i = 0; i < escolhas; i++){
+            var elemento = document.getElementById("esc" + i);
+            elemento.innerHTML = escolhas[i];
+        }
+    }
+}

@@ -1,5 +1,5 @@
 //cria um contrutor para a "classe" "Quiz"
-function Quiz(questoes){
+var Quiz = function (questoes){
     this.record = 0;
     this.questoes = questoes;
     this.questoes_do_Index = 0;

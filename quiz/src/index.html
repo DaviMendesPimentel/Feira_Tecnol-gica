@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Quiz</title>
+		<link rel="stylesheet" type="text/css" href="css/styleform.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+	</head>
+	<body>
+	<div id="fundo">
+	<div id="quiz"><output type="text"><b>Quiz</b><br><br></div>
+	<div class="linha1"></div>
+	
+	<p id="question"></p>
+
+	<div class="buttons">
+	<br>
+	
+	<button id="btn0"><span id="choices0"></span><br>
+	<button id="btn1"><span id="choices1"></span><br>
+	<button id="btn2"><span id="choices2"></span><br>
+	<button id="btn3"><span id="choices3"></span><br>
+	
+	</div>
+	<script>
+
+	var socket = io();
+		
+function Questao(per, alt, res){ //função contrutora para objetos "QUestao"
+                this.per = per;	//cria uma variável "per" que recebe o valor de nos parâmetros "per"
+                this.alt = alt;	//cria um vetor "alt" que recebe o valor de nos parâmetros "alt"
+                this.res = res;	//cria uma variável "res" que recebe o valor de nos parâmetros "res"
+        };
+
+	Questao.prototype.validacao = function(escolha){  // cria um método
+                return this.res == escolha;
+        };
+
+function Quiz(vetor_deQuestoes){
+                this.record = 0;
+                this.vetor_deQuestoes = vetor_deQuestoes;
+                this.questoesLidas = 0;
+        }
+
+var quiz_completo = [
+        new Questao("Qual foi o primeiro computador eletrônico ja criado?",["ENIAC", "ALTAIR", "Abaco", "Apple I"], "ENIAC"),
+        new Questao("Quem foi Steve Jobs e Bill Gates, respectivamente:",["Fundador da Digital e criador do BASIC",
+                                                                      "Fundadores do Atari e da Apple",
+                                                                      "Fundadores da Apple e Microsoft", 
+                                                                      "Criadores do Iphone e da linguagem C"], 
+                                                                      "Fundadores da Apple e Microsoft"),
+        new Questao("Quem foi o(a) primeiro(a) programador(a) da historia?",["Thomas Edson",
+                                                                         "Bill Gates", 
+                                                                         "Dennis Ritchie", 
+                                                                         "Ada Lovelace"],
+                                                                         "Ada Lovelace"),
+        new Questao("O que sao Redes de Computadores?",["Sao meios digitais utilizados para comunicacao entre dados externos",
+                                                    	"Sao lencois enormes que transmitem eletrons entre PCs",
+                                                    	"Sao Equipamentos que transmitem e recebem sinais em codigo Morse",
+                                                    	"Sao cartas de papel escritas em qualquer linguagem para computadores entenderem"],
+                                                    	"Sao meios digitais utilizados para comunicacao entre dados externos"),
+        new Questao("Qual foi a primeira linguagem de programação que existiu na história da computação",
+                ["C++", "Java", "Assembly", "Linguagem C"], "Assembly")
+        ];
+
+
+	var quiz = new Quiz(quiz_completo);
+
+	Quiz.prototype.acabou = function(){
+                return this.questoesLidas === this.vetor_deQuestoes.length;
+        };
+
+
+	Quiz.prototype.mostraInf = function(objQuestao){
+                var pergunta = document.getElementById("question");
+                pergunta.innerHTML = objQuestao.per;
+                var i = 0;
+		var alternativas;
+                for(i = 0; i < objQuestao.alt.length; i++){
+                        alternativas = document.getElementById('btn' + i);
+			alternativas.innerHTML = objQuestao.alt[i];
+                }
+        };
+	function startQuiz(){
+		if(quiz.acabou()){
+                                alert("o quiz acabou");
+				alert("o seu escore foi " + quiz.record);
+				quiz.questoesLidas = 0;
+                }
+		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);
+		
+		
+		/*for(var i = 0; i < quiz.vetor_deQuestoes[quiz.questoesLidas].alt.length; i++){*/
+			lerBotoes(quiz.questoesLidas);
+		}
+
+	function lerBotoes( i ){
+		socket.on("canalLED", function(j){
+			if(quiz.vetor_deQuestoes[i].validacao(quiz.vetor_deQuestoes[i].alt[j].text)){
+				socket.emit("canalLED", 2);
+				++quiz.record;
+				++quiz.questoesLidas;
+				startQuiz();
+			}else{
+				socket.emit("canalLED", 1);
+				++quiz.questoesLidas;
+				startQuiz();
+			}
+		});
+        }
+
+	startQuiz();
+
+	
+	</script>
+
+	</body>
+</html>

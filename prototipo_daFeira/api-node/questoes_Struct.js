@@ -1,6 +1,6 @@
 
 //cria um contrutor para uma "classe" "Questão"
-function Questao(texto, escolhas, resposta){
+var Questao = function (texto, escolhas, resposta){
     this.texto = texto;
     this.escolhas = escolhas;
     this.resposta = resposta;

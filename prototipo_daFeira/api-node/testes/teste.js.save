@@ -1,0 +1,20 @@
+var Gpio = require('onoff').Gpio; //inclui 'onoff' para integarir com os pinos
+var VERMELHA = new Gpio(40, 'out'); //usa o pino 40 para saída de carga
+var blinkInterval = setInterval(blinkLED, 1000); //chama a função blinkLED a cada 1000ms
+var VERDE = new Gpio(7, 'out');	//usa o pino 7 para saida de carga
+
+function blinkLED() { //função blinkLED
+  if (VERMELHA.readSync() === 0) { //verifica se a led está ligada(HIGH)
+    VERMELHA.writeSync(1); //s
+  } else {
+    VERMELHA.writeSync(0); //set pin state to 0 (turn LED off)
+  }
+}
+
+function endBlink() { //function to stop blinking
+  clearInterval(blinkInterval); // Stop blink intervals
+  VERMELHA.writeSync(0); // Turn LED off
+  VERMELHA.unexport(); // Unexport GPIO to free resources
+}
+
+setTimeout(endBlink, 5000); 
