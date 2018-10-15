@@ -35,7 +35,7 @@ appExpress.use('/libraries', express.static('node_modules')); 	//manda o servido
 
 io.sockets.on('connection', function (socket) {			// cria uma conecção websocket utilizando o namespace 'connection'
 
-  socket.on("ligaLed", function(){
+  socket.on("assistaBotoes", function(){
     BOTAO0.watch(function (err, value) {
 	if(err){
 		console.log("erro ocorreu no botao0");
@@ -43,7 +43,7 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 	}
 	if(value != 0){
 		BOTAO0.unwatchAll();
-		socket.emit("ligaLed", 0);
+		socket.emit('resposta', 0);
 		}
 	});							 // assiste a todos os botoes
     BOTAO1.watch(function (err, value) {
@@ -53,7 +53,7 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 	}
 	if(value != 0){
 		BOTAO1.unwatchAll();
-		socket.emit("ligaLed", 1);
+		socket.emit('resposta', 1);
 		}
 	});
     BOTAO2.watch(function (err, value) {
@@ -63,7 +63,7 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 	}
 	if(value != 0){
 		BOTAO2.unwatchAll();
-	 	socket.emit("ligaLed", 2);
+	 	socket.emit('resposta', 2);
 		}
 	});
     BOTAO3.watch(function (err, value) {
@@ -73,12 +73,12 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 	}
 	if(value != 0){
 		BOTAO3.unwatchAll();
-	 	socket.emit("ligaLed", 3);
+	 	socket.emit('resposta', 3);
 		}
 	});
 });
 
-    socket.on("ligaLed", function(resposta) { 			//pega o valor enviado pelo arquivo .html
+    socket.on('ligaLed', function(resposta) { 			//pega o valor enviado pelo arquivo .html
 
 	var interval = setInterval(function(){
 		if (resposta == 1) { 				//verifica qual led é para ligar

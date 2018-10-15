@@ -25,90 +25,92 @@
 
 	var socket = io();
 		
-function Questao(per, alt, res){ //função contrutora para objetos "QUestao"
-                this.per = per;	//cria uma variável "per" que recebe o valor de nos parâmetros "per"
-                this.alt = alt;	//cria um vetor "alt" que recebe o valor de nos parâmetros "alt"
-                this.res = res;	//cria uma variável "res" que recebe o valor de nos parâmetros "res"
+function Questao(per, alt, res){ 			// função construtora para objetos 'Questao'
+                this.per = per;				// cria um atributo 'per' que armazena a pergunta da questao
+                this.alt = alt;				// cria um atributo vetor 'alt' que armazena as alternativas da questão
+                this.res = res;				// cria um atributo 'res' que armazena a resposta da questao
         };
 
-	Questao.prototype.validacao = function(escolha){  // cria um método
-                return this.res == escolha;
+	Questao.prototype.validacao = function(escolha){  	// cria um método da Questao para validar a resposta
+                return this.res === escolha;			// com base na escolha passada por parâmetro
         };
 
-function Quiz(vetor_deQuestoes){
-                this.record = 0;
-                this.vetor_deQuestoes = vetor_deQuestoes;
-                this.questoesLidas = 0;
+function Quiz(vetor_deQuestoes){			// função construtora para o Quiz(objeto quiz)
+                this.record = 0;				// cria um atributo que armazena o record máximo atingido pelo jogador
+                this.vetor_deQuestoes = vetor_deQuestoes;	// cria um atributo vetor que armazena todas as questões instanciadas sob quiz
+                this.questoesLidas = 0;			// cria um atributo que servirá de "iterador" estático
         }
 
-var quiz_completo = [
-        new Questao("Qual foi o primeiro computador eletrônico ja criado?",["ENIAC", "ALTAIR", "Abaco", "Apple I"], "ENIAC"),
-        new Questao("Quem foi Steve Jobs e Bill Gates, respectivamente:",["Fundador da Digital e criador do BASIC",
+var quiz_completo = [	// cria um vetor comum responsável por armazenar as questões
+        new Questao("Qual foi o primeiro computador eletrônico ja criado?",["ENIAC", "ALTAIR", "Abaco", "Apple I"], "ENIAC"), // primeira
+        new Questao("Quem foi Steve Jobs e Bill Gates, respectivamente:",["Fundador da Digital e criador do BASIC", // segunda
                                                                       "Fundadores do Atari e da Apple",
                                                                       "Fundadores da Apple e Microsoft", 
                                                                       "Criadores do Iphone e da linguagem C"], 
                                                                       "Fundadores da Apple e Microsoft"),
-        new Questao("Quem foi o(a) primeiro(a) programador(a) da historia?",["Thomas Edson",
+        new Questao("Quem foi o(a) primeiro(a) programador(a) da historia?",["Thomas Edson",				// terceira
                                                                          "Bill Gates", 
                                                                          "Dennis Ritchie", 
                                                                          "Ada Lovelace"],
                                                                          "Ada Lovelace"),
-        new Questao("O que sao Redes de Computadores?",["Sao meios digitais utilizados para comunicacao entre dados externos",
+        new Questao("O que sao Redes de Computadores?",["Sao meios digitais utilizados para comunicacao entre dados externos", // quarta
                                                     	"Sao lencois enormes que transmitem eletrons entre PCs",
                                                     	"Sao Equipamentos que transmitem e recebem sinais em codigo Morse",
                                                     	"Sao cartas de papel escritas em qualquer linguagem para computadores entenderem"],
                                                     	"Sao meios digitais utilizados para comunicacao entre dados externos"),
-        new Questao("Qual foi a primeira linguagem de programação que existiu na história da computação",
+        new Questao("Qual foi a primeira linguagem de programação que existiu na história da computação", 		// quinta
                 ["C++", "Java", "Assembly", "Linguagem C"], "Assembly")
         ];
 
 
-	var quiz = new Quiz(quiz_completo);
+	var quiz = new Quiz(quiz_completo); 		// cria o objeto Quiz e passa 'quiz_completo' como parâmetro
 
-	Quiz.prototype.acabou = function(){
-                return this.questoesLidas === this.vetor_deQuestoes.length;
+	Quiz.prototype.acabou = function(){				// cria um método do Quiz responsável por verificar se acabaram as questões
+                return this.questoesLidas === this.vetor_deQuestoes.length; // retorna true se o tamanho do vetor de questões for igual ao
+										// número de questões lidas
         };
 
 
-	Quiz.prototype.mostraInf = function(objQuestao){
-                var pergunta = document.getElementById("question");
-                pergunta.innerHTML = objQuestao.per;
-                var i = 0;
-		var alternativas;
-                for(i = 0; i < objQuestao.alt.length; i++){
-                        alternativas = document.getElementById('btn' + i);
-			alternativas.innerHTML = objQuestao.alt[i];
+	Quiz.prototype.mostraInf = function(objQuestao){	// cria um método do Quiz responsável por mostrar as informações(perguntas e alternativas)
+                var pergunta = document.getElementById("question");	// cria uma variável que armazenará o endereço de <div id="question">
+                pergunta.innerHTML = objQuestao.per;		// muda o conteúdo de texto dessa <div> para a pergunta da respectiva questão
+		var alternativas;				// cria uma variável responsável por armazenas as alternativas
+                for(var i = 0; i < objQuestao.alt.length; i++){			// itera até que i seja igual a 5 (i == 5)
+                        alternativas = document.getElementById('btn' + i);	// 'alternativas' passa a receber a div 'btn + i'
+			alternativas.innerHTML = objQuestao.alt[i];		// altera o conteúdo de texto da div com base em 'alt'(vetor de questão)
                 }
         };
-	function startQuiz(){
-		if(quiz.acabou()){
-                                alert("o quiz acabou");
-				alert("o seu escore foi " + quiz.record);
-				quiz.questoesLidas = 0;
+	function startQuiz(){					// função responsável por iniciar o script
+		if(quiz.acabou()){					// verifica se todas as perguntas ja foram lidas
+                                alert("o quiz acabou");				// avisa ao jogador que o quiz acabou
+				alert("o seu escore foi " + quiz.record);	// mostra o record do jogador
+				quiz.questoesLidas = 0;				// reinicia o quiz
+				quiz.record = 0;
                 }
-		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);
-		
-		
-		/*for(var i = 0; i < quiz.vetor_deQuestoes[quiz.questoesLidas].alt.length; i++){*/
-			lerBotoes(quiz.questoesLidas);
+		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);	// invoca o método mostraInf para mostrar as perguntas e alternativas
+										// 								no site
+		lerBotoes(quiz.questoesLidas);			// invoca a função responsável por ler o estado dos botões
 		}
 
-	function lerBotoes( i ){
-		socket.on("canalLED", function(j){
-			if(quiz.vetor_deQuestoes[i].validacao(quiz.vetor_deQuestoes[i].alt[j].text)){
-				socket.emit("canalLED", 2);
-				++quiz.record;
-				++quiz.questoesLidas;
-				startQuiz();
-			}else{
-				socket.emit("canalLED", 1);
-				++quiz.questoesLidas;
-				startQuiz();
+	function lerBotoes( i ){	// função responsável por ler o estado dos botões
+		socket.emit("ligaLed");			// emite um sinal para ler os botões através do servidor
+		socket.on("ligaLed", function(j){		// recebe um sinal do servidor e um valor emitido pelos botões
+			if(quiz.vetor_deQuestoes[i].validacao(quiz.vetor_deQuestoes[i].alt[j])){	// valida a escolha, se for verdadeira:
+				socket.emit("ligaLed", 2);	// emite um sinal para o servidor e passa o valor 2
+				++quiz.record;			// incrementa o valor de record
+				++quiz.questoesLidas;		// incrementa o valor das questões lidas
+				startQuiz();			// reinicia a função
+			}else{			// se não:
+				console.log(j);
+				console.log(quiz.vetor_deQuestoes[i].validacao(quiz.vetor_deQuestoes[i].alt[j]));
+				socket.emit("ligaLed", 1);	// emite um sinal para o servidor e passa o valor 1
+				++quiz.questoesLidas;		// incrementa o valor das questões lidas
+				startQuiz();			// reinicia a função
 			}
 		});
         }
 
-	startQuiz();
+	startQuiz(); // invoca a função para iniciar o quiz
 
 	
 	</script>

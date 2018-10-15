@@ -25,7 +25,7 @@ body{
 	height:50px;
 }
 #btn0 {
-    background-color:#228B22;
+    background-color: green;
     border: none;
 	border-radius:20px;
     color: #000000;
@@ -41,7 +41,7 @@ body{
 	margin:5px 5px;
 }
 #btn1 {
-    background-color:#FFA500;
+    background-color: blue;
     border: none;
 	border-radius:20px;
     color: #000000;
@@ -56,7 +56,7 @@ body{
 	margin:5px 5px;
 }
 #btn2 {
-    background-color: #1E90FF;
+    background-color: yellow;
     border: none;
 	border-radius:20px;'
     color: #000000;
@@ -72,7 +72,7 @@ body{
 	margin:5px 5px;
 }
 #btn3 {
-    background-color:#32CD32 ;
+    background-color: red;
     border: none;
 	border-radius:20px;
     color: #000000;
