@@ -31,13 +31,16 @@ function Questao(per, alt, res){ 			// função construtora para objetos 'Questa
                 this.res = res;				// cria um atributo 'res' que armazena a resposta da questao
         };
 
+	/*
 	Questao.prototype.validacao = function(escolha){  	// cria um método da Questao para validar a resposta
-                return this.res === escolha;			// com base na escolha passada por parâmetro
-        };
+                return this.res == escolha;			// com base na escolha passada por parâmetro
+        };*/
 
-function Quiz(vetor_deQuestoes){			// função construtora para o Quiz(objeto quiz)
+	function validacao(resposta, escolha){ return resposta == escolha;}
+
+function Quiz(vetQuiz){			// função construtora para o Quiz(objeto quiz)
                 this.record = 0;				// cria um atributo que armazena o record máximo atingido pelo jogador
-                this.vetor_deQuestoes = vetor_deQuestoes;	// cria um atributo vetor que armazena todas as questões instanciadas sob quiz
+                this.vetor_deQuestoes = vetQuiz;	// cria um atributo vetor que armazena todas as questões instanciadas sob quiz
                 this.questoesLidas = 0;			// cria um atributo que servirá de "iterador" estático
         }
 
@@ -89,25 +92,83 @@ var quiz_completo = [	// cria um vetor comum responsável por armazenar as quest
                 }
 		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);	// invoca o método mostraInf para mostrar as perguntas e alternativas
 										// 								no site
-		lerBotoes(quiz.questoesLidas);			// invoca a função responsável por ler o estado dos botões
+		lerBotoes(quiz.vetor_deQuestoes[quiz.questoesLidas], quiz.questoesLidas);			// invoca a função responsável por ler o
+														//			estado dos botões
 		}
 
-	function lerBotoes( i ){	// função responsável por ler o estado dos botões
-		socket.emit("ligaLed");			// emite um sinal para ler os botões através do servidor
-		socket.on("ligaLed", function(j){		// recebe um sinal do servidor e um valor emitido pelos botões
-			if(quiz.vetor_deQuestoes[i].validacao(quiz.vetor_deQuestoes[i].alt[j])){	// valida a escolha, se for verdadeira:
-				socket.emit("ligaLed", 2);	// emite um sinal para o servidor e passa o valor 2
+	function lerBotoes(objQuestao, i){	// função responsável por ler o estado dos botões
+		socket.emit("canalBotoes");			// emite um sinal para ler os botões através do servidor
+		socket.on("canalBotoes", function(valor){		// recebe um sinal do servidor e um valor emitido pelos botões
+			if(validacao(objQuestao.res, objQuestao.alt[valor])){	// valida a escolha, se for verdadeira:
+				socket.emit("canalLeds", 2);	// emite um sinal para o servidor e passa o valor 2
 				++quiz.record;			// incrementa o valor de record
 				++quiz.questoesLidas;		// incrementa o valor das questões lidas
 				startQuiz();			// reinicia a função
 			}else{			// se não:
-				console.log(j);
-				console.log(quiz.vetor_deQuestoes[i].validacao(quiz.vetor_deQuestoes[i].alt[j]));
-				socket.emit("ligaLed", 1);	// emite um sinal para o servidor e passa o valor 1
+				console.log(valor);
+				console.log(validacao(objQuestao.alt[valor]));
+				socket.emit("canalLeds", 1);	// emite um sinal para o servidor e passa o valor 1
 				++quiz.questoesLidas;		// incrementa o valor das questões lidas
 				startQuiz();			// reinicia a função
 			}
 		});
+			/*
+				var elemento0 = document.getElementById('btn0');
+				elemento0.onclick = function(){
+							var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[0]);
+							if(validacaoQuestao){
+								alert("Voce acertou!!");
+								++quiz.record;
+								++quiz.questoesLidas;
+								startQuiz();
+							}else{
+								alert("você errou..");
+								++quiz.questoesLidas;
+								startQuiz();
+							}
+						}
+				var elemento1 = document.getElementById('btn1');
+                                elemento1.onclick = function(){
+                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[1]);
+                                                        if(validacaoQuestao){
+                                                                alert("Voce acertou!!");
+                                                                ++quiz.record;
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }else{
+                                                                alert("você errou..");
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }
+                                                }
+				var elemento2 = document.getElementById('btn2');
+                                elemento2.onclick = function(){
+                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[2]);
+                                                        if(validacaoQuestao){
+                                                                alert("Voce acertou!!");
+                                                                ++quiz.record;
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }else{
+                                                                alert("você errou..");
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }
+                                                }
+				var elemento3 = document.getElementById('btn3');
+                                elemento3.onclick = function(){
+                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[3]);
+                                                        if(validacaoQuestao){
+                                                                alert("Voce acertou!!");
+                                                                ++quiz.record;
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }else{
+                                                                alert("você errou..");
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }
+                                                }*/
         }
 
 	startQuiz(); // invoca a função para iniciar o quiz

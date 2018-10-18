@@ -16,6 +16,8 @@ var LEDVERDE = new Gpio(27, 'out'); 				// instancia a LEDVERDE
 var http = require('http').Server(appExpress); 			// inclui a biblioteca 'http' e cria um servidor utilizando o appExpress
 
 var io = require('socket.io')(http); 				// inclui a biblioteca 'socket.io' e passa o servidor de referência para execução
+var canalLed = io.of('\canalLed');
+
 
 appExpress.use(express.static('public')); 			// configura o servidor para utilizar a pasta pública
 
@@ -35,15 +37,15 @@ appExpress.use('/libraries', express.static('node_modules')); 	//manda o servido
 
 io.sockets.on('connection', function (socket) {			// cria uma conecção websocket utilizando o namespace 'connection'
 
-  socket.on("ligaLed", function(){
+  socket.on("canalBotoes", function(){
     BOTAO0.watch(function (err, value) {
 	if(err){
 		console.log("erro ocorreu no botao0");
 		throw err;
 	}
 	if(value != 0){
-		BOTAO0.unwatchAll();
-		socket.emit("ligaLed", 0);
+		unwatchAll();
+		socket.emit("canalBotoes", 0);
 		}
 	});							 // assiste a todos os botoes
     BOTAO1.watch(function (err, value) {
@@ -52,8 +54,8 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 		throw err;
 	}
 	if(value != 0){
-		BOTAO1.unwatchAll();
-		socket.emit("ligaLed", 1);
+		unwatchAll();
+		socket.emit("canalBotoes", 1);
 		}
 	});
     BOTAO2.watch(function (err, value) {
@@ -62,8 +64,8 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 		throw err;
 	}
 	if(value != 0){
-		BOTAO2.unwatchAll();
-	 	socket.emit("ligaLed", 2);
+		unwatchAll();
+	 	socket.emit("canalBotoes", 2);
 		}
 	});
     BOTAO3.watch(function (err, value) {
@@ -72,13 +74,13 @@ io.sockets.on('connection', function (socket) {			// cria uma conecção websock
 		throw err;
 	}
 	if(value != 0){
-		BOTAO3.unwatchAll();
-	 	socket.emit("ligaLed", 3);
+		unwatchAll();
+	 	socket.emit("canalBotoes", 3);
 		}
 	});
 });
 
-    socket.on("ligaLed", function(resposta) { 			//pega o valor enviado pelo arquivo .html
+    socket.on("canalLeds", function(resposta) { 			//pega o valor enviado pelo arquivo .html
 
 	var interval = setInterval(function(){
 		if (resposta == 1) { 				//verifica qual led é para ligar
