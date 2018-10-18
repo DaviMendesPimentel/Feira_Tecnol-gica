@@ -1,3 +1,4 @@
+var iterador = 0;
 var respostas = [0, 2, 3, 0, 2];
 var express = require('express'); 				// inclui a biblioteca 'express'
 var appExpress = express(); 					// linka 'appExpress' com o contrutor 'express()'
@@ -34,16 +35,24 @@ appExpress.get('/', function(req, res){ 			// o servidor executa como referênci
 
 appExpress.use('/libraries', express.static('node_modules')); 	//manda o servidor utilizar as bibliotecas da pasta node_modules
 
-function validacao(escolha, i) {
+function validacao(escolha) {
         console.log("validacao chamada.");
-	if(respostas[i] == escolha){
+	if(respostas[iterador] == escolha){
                 var intervalo = setInterval(function(){
                         if(LEDVERDE.readSync() == 0)
                                 LEDVERDE.writeSync(1);
                         else LEDVERDE.writeSync(0);
                 }, 150);
                 setTimeout(function(){ clearInterval(intervalo); LEDVERDE.writeSync(0); }, 1000);
-        	return true;
+
+		if(iterador >= 4){
+                	iterador = 0;
+        	}else{
+                	++iterador;
+       		 }
+	        console.log("valor de iterador: " + iterador);
+
+		return true;
 	}else{
                 var intervalo = setInterval(function(){
                         if(LEDVERMELHA.readSync() == 0)
@@ -51,6 +60,14 @@ function validacao(escolha, i) {
                         else LEDVERMELHA.writeSync(0);
                 }, 250);
                 setTimeout(function(){ clearInterval(intervalo); LEDVERMELHA.writeSync(0); }, 1000);
+
+		if(iterador >= 4){
+                	iterador = 0;
+        	}else{
+               		 ++iterador;
+       		 }
+	        console.log("valor de iterador: " + iterador);
+
 		return false;
         }
   }
