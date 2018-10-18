@@ -1,0 +1,113 @@
+body{
+	background-color:#FFCOCB;
+}
+#fundo{
+	background-color:#FFFFE0;
+	font-family:"Arial";
+	width:600px;
+	height:500px;
+	margin:auto;
+	padding:50px 60px 50px 60px;
+	border-radius:50px;
+	border:1px solid black;
+	box-shadow:10px 15px 10px #D3D3D3;
+}
+#quiz{
+	position:relative;
+	background-color:#FFE4C4;
+	float:center;
+	border:1px solid transparent;
+	border-radius:60px;
+	text-align:center;
+	font-size:40px;
+	margin:10px 150px;
+	width:300px;
+	height:50px;
+}
+#btn0 {
+    background-color: green;
+    border: none;
+	border-radius:20px;
+    color: #000000;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+	width:250px;
+	outline: 0;
+	margin:5px 5px;
+}
+#btn1 {
+    background-color: blue;
+    border: none;
+	border-radius:20px;
+    color: #000000;
+    padding: 15px 32px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+	cursor: pointer;
+	width:250px;
+	outline: 0;
+	margin:5px 5px;
+}
+#btn2 {
+    background-color: yellow;
+    border: none;
+	border-radius:20px;'
+    color: #000000;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+	width:250px;
+	outline: 0;
+	margin:5px 5px;
+}
+#btn3 {
+    background-color: red;
+    border: none;
+	border-radius:20px;
+    color: #000000;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+	width:250px;
+	outline: 0;
+	margin:0px 10px;
+}
+/*#progress{
+	position:relative;
+	color:black;
+	font-size:16px;
+	text-align:center;
+}*/
+.linha1{
+	position:relative;
+	height:2px;
+	border:1px low;
+	color:#000000;
+	background-color:#000000;
+	margin-top:0px;
+	margin-bottom:0px;
+}
+.linha2{
+	position:relative;
+	height:2px;
+	border:1px low;
+	color:#000000;
+	background-color:#000000;
+	margin-top:90px;
+	margin-bottom:0px;
+}

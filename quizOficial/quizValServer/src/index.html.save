@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Quiz</title>
+		<link rel="stylesheet" type="text/css" href="css/styleform.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+	</head>
+	<body>
+	<div id="fundo">
+	<div id="quiz"><output type="text"><b>Quiz</b><br><br></div>
+	<div class="linha1"></div>
+	
+	<p id="question"></p>
+
+	<div class="buttons">
+	<br>
+	
+	<button id="btn0"><span id="choices0"></span><br>
+	<button id="btn1"><span id="choices1"></span><br>
+	<button id="btn2"><span id="choices2"></span><br>
+	<button id="btn3"><span id="choices3"></span><br>
+	
+	</div>
+	<script>
+		
+function Questao(per, alt, res){
+                this.per = per;
+                this.alt = alt;
+                this.res = res;
+        };
+
+	Questao.prototype.validacao = function(escolha){
+                return this.res == escolha;
+        };
+
+function Quiz(vetor_deQuestoes){
+                this.record = 0;
+                this.vetor_deQuestoes = vetor_deQuestoes;
+                this.repeticoes = 0;
+        }
+
+var quiz_completo = [
+        new Questao("Qual foi o primeiro computador eletrônico ja criado?",["ENIAC", "ALTAIR", "Abaco", "Apple I"], "verde"),
+        new Questao("Quem foi Steve Jobs e Bill Gates, respectivamente:",["Fundador da Digital e criador do BASIC",
+                                                                      "Fundadores do Atari e da Apple",
+                                                                      "Fundadores da Apple e Microsoft", 
+                                                                      "Criadores do Iphone e da linguagem C"], 
+                                                                      "azul"),
+        new Questao("Quem foi o(a) primeiro(a) programador(a) da historia?",["Thomas Edson",
+                                                                         "Bill Gates", 
+                                                                         "Dennis Ritchie", 
+                                                                         "Ada Lovelace"],
+                                                                         "Ada Lovelace"),
+        new Questao("O que sao Redes de Computadores?",["Sao meios digitais utilizados para comunicacao entre dados externos",
+                                                    "Sao lencois enormes que transmitem eletrons entre PCs",
+                                                    "Sao Equipamentos que transmitem e recebem sinais em codigo Morse",
+                                                    "Sao cartas de papel escritas em qualquer linguagem para computadores entenderem"],
+                                                    "verde"),
+        new Questao("Qual foi a primeira linguagem de programação que existiu na história da computação",
+                ["C++", "Java", "Assembly", "Linguagem C"], "Assembly")
+        ];
+
+
+	var quiz = new Quiz(quiz_completo);
+
+	Quiz.prototype.acabou = function(){
+                return this.repeticoes === this.vetor_deQuestoes.length;
+        };
+
+
+	Quiz.prototype.mostraInf = function(objQuestao){
+                var pergunta = document.getElementById("question");
+                pergunta.innerHTML = objQuestao.per;
+                var i = 0;
+		var alternativas;
+                for(i = 0; i < objQuestao.alt.length; i++){
+                        alternativas = document.getElementById('btn' + i);
+			alternativas.innerHTML = objQuestao.alt[i];
+                }
+        };
+	function startQuiz(){
+                var i = 0;
+		var getClick0;
+		var getClick1;
+		var getClick2;
+		var getClick3;
+		
+                for(i = 0; i < quiz.vetor_deQuestoes.length; i++){
+			
+			if(quiz.acabou()){
+                        	alert("o quiz acabou");
+                        	return;
+                	}
+			
+                        quiz.mostraInf(quiz.vetor_deQuestoes[i]);
+ 
+	function lerBotoes(id, i){
+                var idBtn = document.getElementById(id);
+                idBtn.onclick = function(){
+			if(quiz.vetor_deQuestoes[i].validacao(idBtn.text)){
+				lert("voce acertou!!");
+			}else alert("voce errou..");
+
+			++quiz.repeticoes;
+		};
+        }
+
+	startQuiz();
+
+	
+	</script>
+
+	</body>
+</html>

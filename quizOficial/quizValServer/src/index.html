@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Quiz</title>
+		<link rel="stylesheet" type="text/css" href="css/styleform.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+	</head>
+	<body>
+	<div id="fundo">
+	<div id="quiz"><output type="text"><b>Quiz</b><br><br></div>
+	<div class="linha1"></div>
+	
+	<p id="question"></p>
+
+	<div class="buttons">
+	<br>
+	
+	<button id="btn0"><span id="choices0"></span><br>
+	<button id="btn1"><span id="choices1"></span><br>
+	<button id="btn2"><span id="choices2"></span><br>
+	<button id="btn3"><span id="choices3"></span><br>
+	
+	</div>
+	<script>
+
+	var socket = io();
+	var numQuestion = 0;
+	var result = null;
+	
+	function configBotoes(){
+		socket.emit('assistirBotoes', numQuestion);
+		socket.on('message', function(valor){ 
+							result = valor;
+							console.log("variavel valor: " + valor);
+							if(result === true){
+                                				++numQuestion;
+								++quiz.questoesLidas;
+                                				++quiz.record;
+                                				startQuiz();
+                        				}else if(result === false){
+								++quiz.questoesLidas;
+                                				++numQuestion;
+                                				startQuiz();
+					                }
+
+							});
+	}
+			
+	function Questao(per, alt, res){ 			// função construtora para objetos 'Questao'
+                this.per = per;				// cria um atributo 'per' que armazena a pergunta da questao
+                this.alt = alt;				// cria um atributo vetor 'alt' que armazena as alternativas da questão
+                this.res = res;				// cria um atributo 'res' que armazena a resposta da questao
+        };
+
+	/*
+	Questao.prototype.validacao = function(escolha){  	// cria um método da Questao para validar a resposta
+                return this.res == escolha;			// com base na escolha passada por parâmetro
+        };*/
+
+	/* function validacao(resposta, escolha){ return resposta == escolha;}*/
+
+function Quiz(vetQuiz){			// função construtora para o Quiz(objeto quiz)
+                this.record = 0;				// cria um atributo que armazena o record máximo atingido pelo jogador
+                this.vetor_deQuestoes = vetQuiz;	// cria um atributo vetor que armazena todas as questões instanciadas sob quiz
+                this.questoesLidas = 0;			// cria um atributo que servirá de "iterador" estático
+        }
+
+var quiz_completo = [	// cria um vetor comum responsável por armazenar as questões
+        new Questao("Qual foi o primeiro computador eletrônico ja criado?",["ENIAC", "ALTAIR", "Abaco", "Apple I"], "ENIAC"), // primeira
+        new Questao("Quem foi Steve Jobs e Bill Gates, respectivamente:",["Fundador da Digital e criador do BASIC", // segunda
+                                                                      "Fundadores do Atari e da Apple",
+                                                                      "Fundadores da Apple e Microsoft", 
+                                                                      "Criadores do Iphone e da linguagem C"], 
+                                                                      "Fundadores da Apple e Microsoft"),
+        new Questao("Quem foi o(a) primeiro(a) programador(a) da historia?",["Thomas Edson",				// terceira
+                                                                         "Bill Gates", 
+                                                                         "Dennis Ritchie", 
+                                                                         "Ada Lovelace"],
+                                                                         "Ada Lovelace"),
+        new Questao("O que sao Redes de Computadores?",["Sao meios digitais utilizados para comunicacao entre dados externos", // quarta
+                                                    	"Sao lencois enormes que transmitem eletrons entre PCs",
+                                                    	"Sao Equipamentos que transmitem e recebem sinais em codigo Morse",
+                                                    	"Sao cartas de papel escritas em qualquer linguagem para computadores entenderem"],
+                                                    	"Sao meios digitais utilizados para comunicacao entre dados externos"),
+        new Questao("Qual foi a primeira linguagem de programação que existiu na história da computação", 		// quinta
+                ["C++", "Java", "Assembly", "Linguagem C"], "Assembly")
+        ];
+
+
+	var quiz = new Quiz(quiz_completo); 		// cria o objeto Quiz e passa 'quiz_completo' como parâmetro
+
+	Quiz.prototype.acabou = function(){				// cria um método do Quiz responsável por verificar se acabaram as questões
+                return this.questoesLidas === this.vetor_deQuestoes.length; // retorna true se o tamanho do vetor de questões for igual ao
+										// número de questões lidas
+        };
+
+
+	Quiz.prototype.mostraInf = function(objQuestao){	// cria um método do Quiz responsável por mostrar as informações(perguntas e alternativas)
+                var pergunta = document.getElementById("question");	// cria uma variável que armazenará o endereço de <div id="question">
+                pergunta.innerHTML = objQuestao.per;		// muda o conteúdo de texto dessa <div> para a pergunta da respectiva questão
+		var alternativas;				// cria uma variável responsável por armazenas as alternativas
+                for(var i = 0; i < objQuestao.alt.length; i++){			// itera até que i seja igual a 5 (i == 5)
+                        alternativas = document.getElementById('btn' + i);	// 'alternativas' passa a receber a div 'btn + i'
+			alternativas.innerHTML = objQuestao.alt[i];		// altera o conteúdo de texto da div com base em 'alt'(vetor de questão)
+                }
+        };
+	function startQuiz(){					// função responsável por iniciar o script
+		if(quiz.acabou()){					// verifica se todas as perguntas ja foram lidas
+                                alert("o quiz acabou");				// avisa ao jogador que o quiz acabou
+				alert("o seu escore foi " + quiz.record);	// mostra o record do jogador
+				numQuestion = 0;				// reinicia o quiz
+				quiz.record = 0;
+				quiz.questoesLidas = 0;
+				result = null;
+                }
+		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);	// invoca o método mostraInf para mostrar as perguntas e alternativas
+										// 								no sites
+		}
+
+	function lerBotoes(objQuestao, i){	// função responsável por ler o estado dos botões
+			
+			/*	var elemento0 = document.getElementById('btn0');
+				elemento0.onclick = function(){
+							var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[0]);
+							if(validacaoQuestao){
+								socket.emit("ligarLeds", 2);
+								alert("Voce acertou!!");
+								++quiz.record;
+								++quiz.questoesLidas;
+								startQuiz();
+							}else{
+								socket.emit("ligarLeds", 1);
+								alert("você errou..");
+								++quiz.questoesLidas;
+								startQuiz();
+							}
+						}
+				var elemento1 = document.getElementById('btn1');
+                                elemento1.onclick = function(){
+                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[1]);
+                                                        if(validacaoQuestao){
+								socket.emit("ligarLeds", 2);
+                                                                alert("Voce acertou!!");
+                                                                ++quiz.record;
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }else{
+								socket.emit("ligarLeds", 1);
+                                                                alert("você errou..");
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }
+                                                }
+				var elemento2 = document.getElementById('btn2');
+                                elemento2.onclick = function(){
+                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[2]);
+                                                        if(validacaoQuestao){
+								socket.emit("ligarLeds", 2);
+                                                                alert("Voce acertou!!");
+                                                                ++quiz.record;
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }else{
+								socket.emit("ligarLeds", 1);
+                                                                alert("você errou..");
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }
+                                                }
+				var elemento3 = document.getElementById('btn3');
+                                elemento3.onclick = function(){
+                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[3]);
+                                                        if(validacaoQuestao){
+								socket.emit("ligarLeds", 2);
+                                                                alert("voce acertou!!");
+								++quiz.record;
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }else{
+								socket.emit("ligarLeds", 1);
+                                                                alert("você errou..");
+                                                                ++quiz.questoesLidas;
+                                                                startQuiz();
+                                                        }
+                                                }
+			*/
+        }
+
+	configBotoes();	// invoca a função para configurar os sockets
+	startQuiz(); // invoca a função para iniciar o quiz
+
+	
+	</script>
+
+	</body>
+</html>
