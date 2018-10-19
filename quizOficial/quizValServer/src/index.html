@@ -23,49 +23,61 @@
 	</div>
 	<script>
 
-	var socket = io();
-	var numQuestion = 0;
-	var result = null;
+	var socket = io();	// da outro nome para o contrutor 'io()', lembrando que a biblioteca ja foi incluída no link acima
+	var numQuestion = 0;	// cria uma variável global pra servir de referência para o número da questão atual
+				// assim poderemos saber em qual questão está
 	
+	var result = null;	// cria uma variável que armazenará o resultado a ser recebido('true' ou 'false') pelos botões
+	
+	/* a função abaixo emite um sinal para o servidor para que o servidor alerte o ouvinte 'socket.on('assistirBotoes',function(){})'
+	   para que este se mantenha ligado pelo resto do script, por isso, essa função é chamada apenas uma vez.
+	   Se essa função fosse chamada mais vezes, causaria um erro, pois estaria sempre configurando mais ouvintes idênticos, 
+	   ai um bug seria inevitável.. lembre-se que os ouvintes são os 'socket.on()', tanto do cliente, como do servidor */
 	function configBotoes(){
-		socket.emit('assistirBotoes', numQuestion);
-		socket.on('message', function(valor){ 
-							result = valor;
-							console.log("variavel valor: " + valor);
-							if(result === true){
-                                				++numQuestion;
-								++quiz.questoesLidas;
-                                				++quiz.record;
-                                				startQuiz();
-                        				}else if(result === false){
-								++quiz.questoesLidas;
-                                				++numQuestion;
-                                				startQuiz();
+		socket.emit('assistirBotoes', numQuestion);	// emite um sinal para o servidor ligar o ouvinte de 'assistirBotoes'
+								// e deixá-lo em constante funcionamento pelo resto do script
+		socket.on('message', function(valor){ 	// configura um ouvinte 'message' para receber uma mensagem do servidor
+							// e passa o 'valor' como argumento para a função anônima.
+							// esse ouvinte apenas será acionado após a um botão ser pressionado no
+							// servidor
+							
+							result = valor;	// 'result' recebe 'valor'
+							console.log("variavel valor: " + valor); // imprime o valor por questões de debug
+							if(result === true){	// se 'result' for 'true', ou seja, se o jogador acertou
+                                				++numQuestion;	// incrementa 'numQuestion' para ir para próxima questao
+								++quiz.questoesLidas;	// incrementa 'questoesLidas' idêntico ao numQuestion
+                                				++quiz.record;	// incrementa o 'record' do jogador
+                                				startQuiz();	// reinicia a função 'startQuiz()', agora com numQuestion
+										// e 'questoesLidas' incrementados.
+                        				}else if(result === false){	// se o 'result' for 'false', se o jogador errou
+								++quiz.questoesLidas;	// incrementa 'questoesLidas'
+                                				++numQuestion;	// incrementa 'numQuestion'
+                                				startQuiz();	// reinicia a função 'startQuiz()', agora com numQuestion
+										// e 'questoesLidas' incrementados.
 					                }
 
-							});
-	}
-			
-	function Questao(per, alt, res){ 			// função construtora para objetos 'Questao'
+							}); // fim de 'socket.on('message')'
+	}	// fim de 'configBotoes()'
+	
+	/* a função abaixo é responsável por servir de construtora para um objeto 'Questao', ou seja, para uma questão em si.
+	   ela recebe como argumentos uma pergunta(per), um vetor de alternativas('alt', que é um vetor) e a resposta(res).
+	   e armazena o valor desses argumentos nos próprios atributos, podendo ser referenciados em qualquer momento do programa */
+	function Questao(per, alt, res){ 
                 this.per = per;				// cria um atributo 'per' que armazena a pergunta da questao
                 this.alt = alt;				// cria um atributo vetor 'alt' que armazena as alternativas da questão
                 this.res = res;				// cria um atributo 'res' que armazena a resposta da questao
-        };
-
-	/*
-	Questao.prototype.validacao = function(escolha){  	// cria um método da Questao para validar a resposta
-                return this.res == escolha;			// com base na escolha passada por parâmetro
-        };*/
-
-	/* function validacao(resposta, escolha){ return resposta == escolha;}*/
-
-function Quiz(vetQuiz){			// função construtora para o Quiz(objeto quiz)
+	}
+	
+	/* a função abaixo é responsável por servir de construtora para um objeto 'Quiz', ou seja, ela representará
+	   o quiz e seus atributos, ela recebe um vetor de objetos 'Questao' como argumento e armazena-os em seu atributo
+	   'vetor_deQuestoes', que passa a ser um vetor também */
+	function Quiz(vetQuiz){
                 this.record = 0;				// cria um atributo que armazena o record máximo atingido pelo jogador
                 this.vetor_deQuestoes = vetQuiz;	// cria um atributo vetor que armazena todas as questões instanciadas sob quiz
                 this.questoesLidas = 0;			// cria um atributo que servirá de "iterador" estático
         }
-
-var quiz_completo = [	// cria um vetor comum responsável por armazenar as questões
+// essa variável armazena os objetos 'Questao', ou seja, as questões e as guarda num vetor
+var quiz_completo = [
         new Questao("Qual foi o primeiro computador eletrônico ja criado?",["ENIAC", "ALTAIR", "Abaco", "Apple I"], "ENIAC"), // primeira
         new Questao("Quem foi Steve Jobs e Bill Gates, respectivamente:",["Fundador da Digital e criador do BASIC", // segunda
                                                                       "Fundadores do Atari e da Apple",
@@ -87,106 +99,40 @@ var quiz_completo = [	// cria um vetor comum responsável por armazenar as quest
         ];
 
 
-	var quiz = new Quiz(quiz_completo); 		// cria o objeto Quiz e passa 'quiz_completo' como parâmetro
+	var quiz = new Quiz(quiz_completo); 	// cria o objeto Quiz e passa o vetor de questões 'quiz_completo' como parâmetro
+	
+	// a função abaixo é um método de Quiz responsável por verificar se acabaram as questões
+	Quiz.prototype.acabou = function(){
+                return this.questoesLidas === this.vetor_deQuestoes.length; // retorna 'true' se o tamanho do vetor de questões for igual ao
+										// número de questões lidas, ou seja, se o quiz acabou
+        };	// fim de 'Quiz.acabou()'
 
-	Quiz.prototype.acabou = function(){				// cria um método do Quiz responsável por verificar se acabaram as questões
-                return this.questoesLidas === this.vetor_deQuestoes.length; // retorna true se o tamanho do vetor de questões for igual ao
-										// número de questões lidas
-        };
-
-
-	Quiz.prototype.mostraInf = function(objQuestao){	// cria um método do Quiz responsável por mostrar as informações(perguntas e alternativas)
+	// a função abaixo é outro método de quiz responsável por mostrar as informações na página
+	Quiz.prototype.mostraInf = function(objQuestao){	// recebe um objeto 'Questao', ou seja, uma questão como argumento
                 var pergunta = document.getElementById("question");	// cria uma variável que armazenará o endereço de <div id="question">
                 pergunta.innerHTML = objQuestao.per;		// muda o conteúdo de texto dessa <div> para a pergunta da respectiva questão
 		var alternativas;				// cria uma variável responsável por armazenas as alternativas
                 for(var i = 0; i < objQuestao.alt.length; i++){			// itera até que i seja igual a 5 (i == 5)
                         alternativas = document.getElementById('btn' + i);	// 'alternativas' passa a receber a div 'btn + i'
 			alternativas.innerHTML = objQuestao.alt[i];		// altera o conteúdo de texto da div com base em 'alt'(vetor de questão)
-                }
-        };
-	function startQuiz(){					// função responsável por iniciar o script
-		if(quiz.acabou()){					// verifica se todas as perguntas ja foram lidas
+                } // fim do 'for'
+        };	// fim de 'Quiz.mostraInf()'
+	
+	// essa função será a nossa 'main()' do script, ela será responsável por gerenciar o script do client
+	function startQuiz(){
+		if(quiz.acabou()){					// se o quiz acabou:
                                 alert("o quiz acabou");				// avisa ao jogador que o quiz acabou
 				alert("o seu escore foi " + quiz.record);	// mostra o record do jogador
-				numQuestion = 0;				// reinicia o quiz
-				quiz.record = 0;
-				quiz.questoesLidas = 0;
-				result = null;
+				numQuestion = 0;				// reseta numQuestion
+				quiz.record = 0;				// reseta o record
+				quiz.questoesLidas = 0;				// reseta o número de questoes lidas
+				result = null;					// result volta a ser null
                 }
-		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);	// invoca o método mostraInf para mostrar as perguntas e alternativas
-										// 								no sites
+		quiz.mostraInf(quiz.vetor_deQuestoes[quiz.questoesLidas]);	// invoca o método mostraInf para mostrar as perguntas 
+										// e alternativas no site
 		}
 
-	function lerBotoes(objQuestao, i){	// função responsável por ler o estado dos botões
-			
-			/*	var elemento0 = document.getElementById('btn0');
-				elemento0.onclick = function(){
-							var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[0]);
-							if(validacaoQuestao){
-								socket.emit("ligarLeds", 2);
-								alert("Voce acertou!!");
-								++quiz.record;
-								++quiz.questoesLidas;
-								startQuiz();
-							}else{
-								socket.emit("ligarLeds", 1);
-								alert("você errou..");
-								++quiz.questoesLidas;
-								startQuiz();
-							}
-						}
-				var elemento1 = document.getElementById('btn1');
-                                elemento1.onclick = function(){
-                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[1]);
-                                                        if(validacaoQuestao){
-								socket.emit("ligarLeds", 2);
-                                                                alert("Voce acertou!!");
-                                                                ++quiz.record;
-                                                                ++quiz.questoesLidas;
-                                                                startQuiz();
-                                                        }else{
-								socket.emit("ligarLeds", 1);
-                                                                alert("você errou..");
-                                                                ++quiz.questoesLidas;
-                                                                startQuiz();
-                                                        }
-                                                }
-				var elemento2 = document.getElementById('btn2');
-                                elemento2.onclick = function(){
-                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[2]);
-                                                        if(validacaoQuestao){
-								socket.emit("ligarLeds", 2);
-                                                                alert("Voce acertou!!");
-                                                                ++quiz.record;
-                                                                ++quiz.questoesLidas;
-                                                                startQuiz();
-                                                        }else{
-								socket.emit("ligarLeds", 1);
-                                                                alert("você errou..");
-                                                                ++quiz.questoesLidas;
-                                                                startQuiz();
-                                                        }
-                                                }
-				var elemento3 = document.getElementById('btn3');
-                                elemento3.onclick = function(){
-                                                        var validacaoQuestao = validacao(objQuestao.res, objQuestao.alt[3]);
-                                                        if(validacaoQuestao){
-								socket.emit("ligarLeds", 2);
-                                                                alert("voce acertou!!");
-								++quiz.record;
-                                                                ++quiz.questoesLidas;
-                                                                startQuiz();
-                                                        }else{
-								socket.emit("ligarLeds", 1);
-                                                                alert("você errou..");
-                                                                ++quiz.questoesLidas;
-                                                                startQuiz();
-                                                        }
-                                                }
-			*/
-        }
-
-	configBotoes();	// invoca a função para configurar os sockets
+	configBotoes();	// invoca a função para configurar os sockets, repare que 'configBotoes()' é invocada apenas uma única vez
 	startQuiz(); // invoca a função para iniciar o quiz
 
 	
